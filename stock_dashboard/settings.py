@@ -18,6 +18,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", "local-dev-key-change-this")
 
 # DEBUG mode: False in production
 DEBUG = os.getenv("DEBUG", "False") == "True"
+#DEBUG = True
+
 
 # Render automatically injects RENDER_EXTERNAL_HOSTNAME
 ALLOWED_HOSTS = [

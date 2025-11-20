@@ -1,15 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Stock Dashboard</title>
+    <meta charset="UTF-8">
+    <title>Professional Stock Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        .form-label {
+            color: #f5f5f5;
+        }
+        h1 {
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #00b894;
+        }
+
+        /* Fix Select2 dropdown colors */
+        .select2-container--bootstrap4 .select2-selection--multiple {
+            min-height: 50px;
+            background-color: #1e1e1e;
+            border: 1px solid #444;
+            color: #fff;
+        }
+        .select2-container--bootstrap4 .select2-selection__choice {
+            color: #fff;
+            background-color: #00b894;
+        }
+        .select2-container--bootstrap4 .select2-selection__rendered {
+            color: #fff;
+        }
+        .select2-container--bootstrap4 .select2-dropdown {
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+        .select2-container--bootstrap4 .select2-results__option {
+            color: #fff;
+        }
+        .select2-container--bootstrap4 .select2-search--dropdown .select2-search__field {
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 <div class="container mt-4">
-    <h1 class="mb-4 text-center">Dynamic Stock Dashboard</h1>
+    <h1 class="text-center">Professional Stock Dashboard</h1>
 
     <div class="card p-4 mb-4">
-        <form method="get">
+        <form id="stock-form" method="get">
             <div class="row mb-3">
                 <!-- Stock input -->
                 <div class="col-md-3">
@@ -32,26 +82,25 @@
                     <label class="form-label">Period:</label>
                     <select name="period" class="form-select">
                         {% for p in periods %}
-                        <option value="{{ p }}" {% if selected_period == p %}selected{% endif %}>{{ p }}</option>
+                            <option value="{{ p }}" {% if selected_period == p %}selected{% endif %}>{{ p }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
                 <!-- Submit button -->
                 <div class="col-md-3 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">Fetch</button>
+                    <button type="submit" class="btn btn-success w-100">Fetch</button>
                 </div>
             </div>
 
-            <!-- Indicators -->
+            <!-- Indicators multi-select -->
             <div class="mb-3">
-                <label class="form-label">Indicators:</label><br>
-                {% for ind in indicators %}
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" name="indicator" value="{{ ind }}" {% if ind in selected_indicators %}checked{% endif %}>
-                        <label class="form-check-label">{{ ind }}</label>
-                    </div>
-                {% endfor %}
+                <label class="form-label">Indicators:</label>
+                <select name="indicator" class="form-select select2" multiple="multiple" style="width:100%;">
+                    {% for ind in indicators %}
+                        <option value="{{ ind }}" {% if ind in selected_indicators %}selected{% endif %}>{{ ind }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </form>
     </div>
@@ -68,5 +117,31 @@
         </div>
     {% endif %}
 </div>
+
+<script>
+    $(document).ready(function() {
+        // Initialize Select2
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            placeholder: "Select Indicators",
+            allowClear: true
+        });
+
+        // Auto-submit on interval, period, or indicators change
+        $('#stock-form select, .select2').on('change', function() {
+            $('#stock-form').submit();
+        });
+
+        // Auto-submit on stock code input after delay
+        let typingTimer;
+        const delay = 700; // milliseconds
+        $('#stock-form input[name="stock"]').on('keyup', function() {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(function() {
+                $('#stock-form').submit();
+            }, delay);
+        });
+    });
+</script>
 </body>
 </html>
