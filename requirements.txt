@@ -1,0 +1,9 @@
+Django==4.2
+gunicorn
+yfinance
+pandas
+plotly
+numpy
+curl_cffi
+django-environ
+whitenoise
